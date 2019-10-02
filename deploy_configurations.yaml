@@ -1,0 +1,20 @@
+---
+- name: Deploy Cisco IOS-XE Router Configurations
+  connection: local
+  hosts: cisco-ios-xe-routers
+  gather_facts: no
+  vars:
+    creds:
+      hostname: "10.0.0.5"
+      username: "ignw"
+      password: "ignw"
+      dev_os: "ios"
+  tasks:
+    - napalm_install_config:
+        provider: "{{ creds }}"
+        config_file: "configs/{{ inventory_hostname }}"
+        commit_changes: False
+      register: napalm_diff
+    - debug:
+        msg: "{{ item }}"
+      with_items: "{{ napalm_diff.msg.split('\n') }}"
