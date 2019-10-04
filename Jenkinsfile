@@ -4,12 +4,18 @@ node {
     deleteDir()
     checkout scm
   }
+  stage ('validate Generate configurations playbook') {
+    sh 'ansible-playbook generate_configurations.yaml --syntax-check'
+  }
+  
   stage ('Render Configurations') {
     // Generate our configurations with our sweet Playbooks
     sh 'ansible-playbook generate_configurations.yaml'
   }
+
   stage ('Unit Testing') {
     // Do some kind of "linting" on our code to make sure we didn't bugger anything up too badly
+    sh 'ansible-playbook deploy_configurations.yaml --syntax-check'
   }
   stage ('Deploy Configurations to Dev') {
     // Push the configurations out to the dev environment
